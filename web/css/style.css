@@ -2,6 +2,9 @@
 	text-align: center;
 	background: url('../images/bg-line.png') repeat-x 0 30px;
 }
+.header h1 {
+	margin-bottom: 30px;
+}
 #result {
 	padding:1em;
 }
