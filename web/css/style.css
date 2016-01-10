@@ -17,3 +17,11 @@
 	border:1px solid #CCCCCC;
 	border-radius: 5px;
 }
+.bold-text {
+	font-weight: bold;
+}
+
+
+.highlight {
+	background-color: #FFFF88;
+}

@@ -16,7 +16,7 @@ $(document).ready(function(){
 				var liste = $.parseJSON(data);
 				//alert(liste);
 				//console.log(liste.itemListElement);
-					
+
 				$.each(liste.itemListElement, function(i, element) {
 					var html = '<div class="entity">';
 					var name = '<h3>'+element['result']['name']+'</h3>';
@@ -27,21 +27,22 @@ $(document).ready(function(){
 					html += desc;
 					html += article;
 					html += '</div>';
-					
+
 					//alert(element['result']['image']['url']);
 					//var img = '<img src="'+element['result']['name']+'" alt="">';
-					
+
 					$(html).appendTo('#entities');
+					$("#entities").highlight(search.split(" "));
 					//$('hello').appendTo('#searchResult');*/
 				});
-					
+
 				//$(search).appendTo('#searchResult');
-					
+
 			},
 			error: function(err){
 				console.log(err);
 			}
-		});	
+		});
 	})
 	$('#'+crawl).click(function(){
 		var search = $('#search').val();
@@ -70,23 +71,23 @@ $(document).ready(function(){
 					html += '</div><div class="col-md-3">'
 					html += image;
 					html += '</div></div></div>';
-					
+
 					//alert(element['result']['image']['url']);
 					//var img = '<img src="'+element['result']['name']+'" alt="">';
-					
-					
+
+
 					//}
 				});
-				
+
 				$(html).appendTo('#searchResult');
-				
-					
+				$(".freeTextSearch").highlight(search.split(" "));
+
 			},
 			error: function(err){
 				console.log(err);
 			}
-		});	
+		});
 
 	});
-	
+
 });
