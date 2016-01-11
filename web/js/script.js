@@ -1,31 +1,30 @@
 $(document).ready(function(){
-	var crawl = "first";
 
 	$('.crawl').click(function(){
-		crawl = $(this).attr('id');
-		$('#entities').children().remove();
-		$('#searchResult').children().remove();
-		var search = $('#search').val();
-		//alert("click");
+			var search = $('#search').val().replaceArray(stop_w,' ');
+
 		$.ajax({
 			type: 'POST',
 			url: 'src/Search/entiteSearch.php',
 			data: {"search": search},
 			success: function(data){
-				//alert(data);
 				var liste = $.parseJSON(data);
-				//alert(liste);
-				//console.log(liste.itemListElement);
-
 				$.each(liste.itemListElement, function(i, element) {
 					var html = '<div class="entity">';
-					var name = '<h3>'+element['result']['name']+'</h3>';
+					if(!!element['result']['detailedDescription'] && !!element['result']['detailedDescription']['url'] ){
+						var name = '<a target="_blank" href="'+element['result']['detailedDescription']['url']+'"><h3>'+element['result']['name']+'</h3></a>';
+					}else
+						var name = '<h3>'+element['result']['name']+'</h3>';
 					var desc = '<p>'+element['result']['description']+'</p>';
-					var article = '<p>'+element['result']['detailedDescription']['articleBody']+'</p>';
 
 					html += name;
+					if(element.result.image)
+						html += "<img class='icon' src='"+element.result.image.contentUrl+"'/>";
 					html += desc;
-					html += article;
+					if(!!element['result']['detailedDescription'] && !!element['result']['detailedDescription']['articleBody'] ){
+
+						html += '<p>'+element['result']['detailedDescription']['articleBody']+'</p>';
+					}
 					html += '</div>';
 
 					//alert(element['result']['image']['url']);
@@ -36,58 +35,197 @@ $(document).ready(function(){
 					//$('hello').appendTo('#searchResult');*/
 				});
 
-				//$(search).appendTo('#searchResult');
-
-			},
-			error: function(err){
-				console.log(err);
-			}
-		});
-	})
-	$('#'+crawl).click(function(){
-		var search = $('#search').val();
-		$.ajax({
-			type: 'POST',
-			url: 'src/Search/freeTextSearch.php',
-			data: {"search": search, "core": "tika"},
-			success: function(data){
-				//alert(data);
-				console.log(data);
-				var liste = $.parseJSON(data);
-				//alert(liste.response.docs);
-				//console.log(liste.itemListElement);
-				var html = '<h2>Search on CNET</h2>';
-				html += '<p>'+liste.response['numFound']+' resultats pour "'+search+'"</p>';
-				$.each(liste.response.docs, function(i, element) {
-					html += '<div class="freeTextSearch">';
-					html += '<div class="row"><div class="col-md-9">'
-					var name = '<h3>'+element['title']+'</h3>';
-					var content = (element['content'])?'<p>'+element['content']+'</p>':'';
-					var image = '<img src="'+element['preview_image']+'" alt="'+name+'"/>';
-					//var article = '<p>'+element['result']['detailedDescription']['articleBody']+'</p>';
-
-					html += name;
-					html += content;
-					html += '</div><div class="col-md-3">'
-					html += image;
-					html += '</div></div></div>';
-
-					//alert(element['result']['image']['url']);
-					//var img = '<img src="'+element['result']['name']+'" alt="">';
-
-
-					//}
-				});
-
-				$(html).appendTo('#searchResult');
-				$(".freeTextSearch").highlight(search.split(" "));
-
 			},
 			error: function(err){
 				console.log(err);
 			}
 		});
 
-	});
+			var core="crawl_one";
+			if($(this).attr('id') == "second")
+				core = "crawl_two";
+			else if($(this).attr('id') == "third")
+				core = "crawl_three";
+
+			$('#entities').children().remove();
+			$('#searchResult').children().remove();
+			$.ajax({
+				type: 'POST',
+				url: 'src/Search/freeTextSearch.php',
+				data: {"search": search, "core": core},
+				success: function(data){
+					//console.log(data);
+					var liste = $.parseJSON(data);
+					var html = '<h2>Search on CNET</h2>';
+					html += '<p>'+liste.response['numFound']+' resultats pour "'+search+'"</p>';
+					$.each(liste.response.docs, function(i, element) {
+						if(!!element['url'])
+							html+='<a target="_blank" href="'+element['url']+'">';
+						html += '<div class="row freeTextSearch">';
+						html += '<div class="col-md-10">'
+						var name = '<h3>'+element['title']+'</h3>';
+						var content = (element['content'])?'<p>'+element['content']+'</p>':'';
+
+						html += name;
+
+						html += content;
+						html += '</div><div class="col-md-2"><div class="vertical-center"> ';
+						html+='<img src="'+element['preview_image']+'" alt="">';
+						html += '</div></div></div>';
+
+						if(!!element['url'])
+							html+='</a>';
+
+					});
+
+					$(html).appendTo('#searchResult');
+					$(".freeTextSearch").highlight(search.split(" "));
+
+				},
+				error: function(err){
+					console.log(err);
+				}
+			});
+
+		});
+
 
 });
+
+function getImgFromUrl(url){
+	$.get(url, function(data) {
+		var imgs = $('<div/>').html(data).find('img');
+		imgs.each(function(i, img) {
+			alert(img.src); // show a dialog containing the url of image
+		});
+	});
+}
+
+String.prototype.replaceArray = function(find, replace) {
+	var replaceString = this;
+	for (var i = 0; i < find.length; i++) {
+		var regex = new RegExp(" "+find[i]+" ", "gi");
+		replaceString = replaceString.replace(regex, replace);
+	}
+	return replaceString;
+};
+
+var stop_w = ["alors",":",".",",",";","/","?","\\","au",
+	"aucuns",
+	"aussi",
+	"autre",
+	"avant",
+	"avec",
+	"avoir",
+	"bon",
+	"car",
+	"ce",
+	"cela",
+	"ces",
+	"ceux",
+	"chaque",
+	"ci",
+	"comme",
+	"comment",
+	"dans",
+		"de",
+	"des",
+	"du",
+	"dedans",
+	"dehors",
+	"depuis",
+	"devrait",
+	"doit",
+	"donc",
+	"dos",
+	"début",
+	"elle",
+	"elles",
+	"en",
+	"encore",
+	"essai",
+	"est",
+	"et",
+	"eu",
+	"fait",
+	"faites",
+	"fois",
+	"font",
+	"hors",
+	"ici",
+	"il",
+	"ils",
+	"je",
+	"juste",
+	"la",
+	"le",
+	"les",
+	"leur",
+	"là",
+	"ma",
+	"maintenant",
+	"mais",
+	"mes",
+	"mine",
+	"moins",
+	"mon",
+	"mot",
+	"même",
+	"ni",
+	"nommés",
+	"notre",
+	"nous",
+	"ou",
+	"où",
+	"par",
+	"parce",
+	"pas",
+	"peut",
+	"peu",
+	"plupart",
+	"pour",
+	"pourquoi",
+	"quand",
+	"que",
+	"quel",
+	"quelle",
+	"quelles",
+	"quels",
+	"qui",
+	"sa",
+	"sans",
+	"ses",
+	"seulement",
+	"si",
+	"sien",
+	"son",
+	"sont",
+	"sous",
+	"soyez",
+	"sujet",
+	"sur",
+	"ta",
+	"tandis",
+	"tellement",
+	"tels",
+	"tes",
+	"ton",
+	"tous",
+	"tout",
+	"trop",
+	"très",
+	"tu",
+	"voient",
+	"vont",
+	"votre",
+		"vos",
+		"un",
+		"une",
+	"vous",
+	"vu",
+	"ça",
+	"étaient",
+	"état",
+	"étions",
+	"été",
+	"être"]
