@@ -1,3 +1,4 @@
+/*=== PAGE ===*/
 .header {
 	text-align: center;
 	background: url('../images/bg-line.png') repeat-x 0 30px;
@@ -6,23 +7,75 @@
 	margin-bottom: 30px;
 }
 #result {
+	margin-top:10px;
 	padding:1em;
 }
+.nbResults {
+	padding: 5px 20px; 
+	text-align: right;
+	color: #FFFFFF;
+	background: #B71C1C;
+}
+.btn-default {
+	border:1px solid #B71C1C;
+	background:#B71C1C;
+	color: #FFFFFF;
+}
+a:hover{
+	color:#B71C1C;
+}
+
+footer {
+	text-align: center;
+	font-style: italic;
+}
+/*=== RECHERCHE SOLR ===*/
+
+
 #searchResult {
 	padding:1em;
 }
+.freeTextSearch h3 a, .url, a .glyphicon, .entity h3, footer, a:hover {
+ 	color:#B71C1C;
+}
+.freeTextSearch p{
+	text-align: justify;
+}
+.freeTextSearch img{
+	width: 40px;
+	height: 40px;
+	margin-right: 10px;
+	border-radius: 100%;
+	-webkit-border-radius: 100%;
+	-moz-border-radius: 100%;
+}
+
+a .glyphicon{
+	margin:0 10px;
+}
+/*=== ENTITIES ===*/
 .entity {
 	margin-bottom:10px;
 	padding:10px;
 	border:1px solid #CCCCCC;
 	border-radius: 5px;
 }
-
+.entity h3 {
+	text-align: center;
+	padding: 3px 0;
+	border-top: 2px solid #B71C1C;
+	border-bottom: 2px solid #B71C1C;
+}
 .icon {
 	width: 100px;
-	height: 50px;
 }
-
+.entityType {
+	margin-top: 1em;
+	padding: 5px;
+	font-weight: bold;
+	text-align: center;
+	background: #B71C1C;
+}
 .bold-text {
 	font-weight: bold;
 }

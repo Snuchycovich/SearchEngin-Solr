@@ -1,5 +1,5 @@
 <?php
-
+//echo "hello";
 $search = $_POST['search'];
 $search = wd_remove_accents($search);
 
@@ -7,7 +7,6 @@ $core = $_POST['core'];
 //var_dump($core);
 $searchStr = str_replace(": ", "", trim($search));
 $searchStr = str_replace(" ", "+", $searchStr);
-//var_dump($searchStr);
 $url = "http://localhost:8983/solr/".$core."/select?q=".$searchStr."~&df=content&wt=json&indent=true";
 //echo $url;
 //var_dump($url);

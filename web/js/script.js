@@ -6,6 +6,7 @@ $(document).ready(function(){
 
 
 	$('.crawl').click(function(){
+		var id = $(this).attr('id');
 		o = $Spelling.AjaxDidYouMean($('#search').val())
 
 		o.onDidYouMean = function(result){
@@ -21,97 +22,100 @@ $(document).ready(function(){
 			}
 		}
 
-		findResults();
+		findResults(id);
 
 
 		});
 
-	var findResults = function(){
+	var findResults = function(id){
 		var search = $('#search').val().replaceArray(stop_w,' ');
+		if (search) {
+			$.ajax({
+				type: 'POST',
+				url: 'src/Search/entiteSearch.php',
+				data: {"search": search},
+				success: function(data){
+					var liste = $.parseJSON(data);
+					$.each(liste.itemListElement, function(i, element) {
+						var html = '<div class="entity">';
+						if(!!element['result']['detailedDescription'] && !!element['result']['detailedDescription']['url'] ){
+							var name = '<a target="_blank" href="'+element['result']['detailedDescription']['url']+'"><h3>'+element['result']['name']+'</h3></a>';
+						}else
+							var name = '<h3>'+element['result']['name']+'</h3>';
+						var desc = (!!element['result']['description'])?'<p class="entityType">'+element['result']['description']+'</p>':'';
 
-		$.ajax({
-			type: 'POST',
-			url: 'src/Search/entiteSearch.php',
-			data: {"search": search},
-			success: function(data){
-				var liste = $.parseJSON(data);
-				$.each(liste.itemListElement, function(i, element) {
-					var html = '<div class="entity">';
-					if(!!element['result']['detailedDescription'] && !!element['result']['detailedDescription']['url'] ){
-						var name = '<a target="_blank" href="'+element['result']['detailedDescription']['url']+'"><h3>'+element['result']['name']+'</h3></a>';
-					}else
-						var name = '<h3>'+element['result']['name']+'</h3>';
-					var desc = '<p>'+element['result']['description']+'</p>';
+						html += name;
+						if(element.result.image)
+							html += '<figure><img class="icon" src="'+element.result.image.contentUrl+'"/><figure>';
+						html += desc;
+						if(!!element['result']['detailedDescription'] && !!element['result']['detailedDescription']['articleBody'] ){
 
-					html += name;
-					if(element.result.image)
-						html += "<img class='icon' src='"+element.result.image.contentUrl+"'/>";
-					html += desc;
-					if(!!element['result']['detailedDescription'] && !!element['result']['detailedDescription']['articleBody'] ){
+							html += '<p>'+element['result']['detailedDescription']['articleBody']+'</p>';
+						}
+						html += '</div>';
 
-						html += '<p>'+element['result']['detailedDescription']['articleBody']+'</p>';
-					}
-					html += '</div>';
+						$(html).appendTo('#entities');
+						$("#entities").highlight(search.split(" "));
+					});
 
-					//alert(element['result']['image']['url']);
-					//var img = '<img src="'+element['result']['name']+'" alt="">';
+				},
+				error: function(err){
+					console.log(err);
+				}
+			});
+		
 
-					$(html).appendTo('#entities');
-					$("#entities").highlight(search.split(" "));
-					//$('hello').appendTo('#searchResult');*/
-				});
+			if(id == "first")
+				core = "crawl_one";
+			else if(id == "second")
+				core = "crawl_two";
+			else if(id == "third")
+				core = "crawl_three";
 
-			},
-			error: function(err){
-				console.log(err);
-			}
-		});
+			$('#entities').children().remove();
+			$('#searchResult').children().remove();
+			
+			$.ajax({
+				type: 'POST',
+				url: 'src/Search/freeTextSearch.php',
+				data: {"search": search, "core": core},
+				success: function(data){
+					console.log(data);
+					var liste = $.parseJSON(data);
+					var html = '<h2>Search on CNET</h2>';
+					html += '<p class="nbResults"><strong>'+liste.response['numFound']+'</strong> resultats pour <strong>"'+$('#search').val()+'"</strong></p>';
+					$.each(liste.response.docs, function(i, element) {
+						if(!!element['url'])
+						html+='';
+						html += '<div class="row freeTextSearch">';
+						html += '<div class="col-md-12">'
+						var urlToFilename = element['url'];
+						var fileName= urlToFilename.split("/");
+						var name = '<h3><a target="_blank" href="'+element['url']+'"><img src="'+element['preview_image']+'" alt="'+element['title']+'">'+element['title']+'</a></h3>';
+						var url = '<a class="url" target="_blank" href="'+element['url']+'" title="Page originale">'+element['url']+'</a> <a target="_blank" href="http://localhost:8983/solr/'+core+'/'+fileName[4]+'" title="Page en cache"><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></a>';
+						var content = (element['content'])?'<p>'+element['content']+'</p>':'';
 
-		var core="crawl_one";
-		if($(this).attr('id') == "second")
-			core = "crawl_two";
-		else if($(this).attr('id') == "third")
-			core = "crawl_three";
+						html += name;
+						html += url;
+						html += content;
+						html += '</div><div class="col-md-2"><div class="vertical-center"> ';
+						//html+='<img src="'+element['preview_image']+'" alt="">';
+						html += '</div></div></div>';
 
-		$('#entities').children().remove();
-		$('#searchResult').children().remove();
-		$.ajax({
-			type: 'POST',
-			url: 'src/Search/freeTextSearch.php',
-			data: {"search": search, "core": core},
-			success: function(data){
-				//console.log(data);
-				var liste = $.parseJSON(data);
-				var html = '<h2>Search on CNET</h2>';
-				html += '<p>'+liste.response['numFound']+' resultats pour "'+$('#search').val()+'"</p>';
-				$.each(liste.response.docs, function(i, element) {
-					if(!!element['url'])
-						html+='<a target="_blank" href="'+element['url']+'">';
-					html += '<div class="row freeTextSearch">';
-					html += '<div class="col-md-10">'
-					var name = '<h3>'+element['title']+'</h3>';
-					var content = (element['content'])?'<p>'+element['content']+'</p>':'';
+						/*if(!!element['url'])
+							html+='</a>';*/
 
-					html += name;
+					});
 
-					html += content;
-					html += '</div><div class="col-md-2"><div class="vertical-center"> ';
-					html+='<img src="'+element['preview_image']+'" alt="">';
-					html += '</div></div></div>';
+					$(html).appendTo('#searchResult');
+					$(".freeTextSearch").highlight(search.split(" "));
 
-					if(!!element['url'])
-						html+='</a>';
-
-				});
-
-				$(html).appendTo('#searchResult');
-				$(".freeTextSearch").highlight(search.split(" "));
-
-			},
-			error: function(err){
-				console.log(err);
-			}
-		});
+				},
+				error: function(err){
+					console.log(err);
+				}
+			});
+		}
 	}
 
 
