@@ -17,6 +17,12 @@
 	border:1px solid #CCCCCC;
 	border-radius: 5px;
 }
+
+.icon {
+	width: 100px;
+	height: 50px;
+}
+
 .bold-text {
 	font-weight: bold;
 }
@@ -24,4 +30,10 @@
 
 .highlight {
 	background-color: #FFFF88;
+}
+
+.vertical-center {
+	display: inline-block;
+	vertical-align: middle;
+	float: none;
 }
