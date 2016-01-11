@@ -93,14 +93,14 @@ $(document).ready(function(){
 					var content = (element['content'])?'<p>'+element['content']+'</p>':'';
 
 					html += name;
-
+					if(!!element['url'])
+						html+='</a>';
 					html += content;
 					html += '</div><div class="col-md-2"><div class="vertical-center"> ';
 					html+='<img src="'+element['preview_image']+'" alt="">';
 					html += '</div></div></div>';
 
-					if(!!element['url'])
-						html+='</a>';
+
 
 				});
 
