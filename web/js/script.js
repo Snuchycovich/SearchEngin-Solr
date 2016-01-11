@@ -17,7 +17,7 @@ $(document).ready(function(){
 				$("#suggestionLink").click(function () {
 					$('#search').val(result);
 					$("#spell").remove();
-					findResults();
+					findResults(id);
 				})
 			}
 		}
@@ -116,6 +116,92 @@ $(document).ready(function(){
 				}
 			});
 		}
+=======
+
+		$.ajax({
+			type: 'POST',
+			url: 'src/Search/entiteSearch.php',
+			data: {"search": search},
+			success: function(data){
+				var liste = $.parseJSON(data);
+				$.each(liste.itemListElement, function(i, element) {
+					var html = '<div class="entity">';
+					if(!!element['result']['detailedDescription'] && !!element['result']['detailedDescription']['url'] ){
+						var name = '<a target="_blank" href="'+element['result']['detailedDescription']['url']+'"><h3>'+element['result']['name']+'</h3></a>';
+					}else
+						var name = '<h3>'+element['result']['name']+'</h3>';
+					var desc = '<p>'+element['result']['description']+'</p>';
+
+					html += name;
+					if(element.result.image)
+						html += "<img class='icon' src='"+element.result.image.contentUrl+"'/>";
+					html += desc;
+					if(!!element['result']['detailedDescription'] && !!element['result']['detailedDescription']['articleBody'] ){
+
+						html += '<p>'+element['result']['detailedDescription']['articleBody']+'</p>';
+					}
+					html += '</div>';
+
+					//alert(element['result']['image']['url']);
+					//var img = '<img src="'+element['result']['name']+'" alt="">';
+
+					$(html).appendTo('#entities');
+					$("#entities").highlight(search.split(" "));
+					//$('hello').appendTo('#searchResult');*/
+				});
+
+			},
+			error: function(err){
+				console.log(err);
+			}
+		});
+
+		var core="crawl_one";
+		if($(this).attr('id') == "second")
+			core = "crawl_two";
+		else if($(this).attr('id') == "third")
+			core = "crawl_three";
+
+		$('#entities').children().remove();
+		$('#searchResult').children().remove();
+		$.ajax({
+			type: 'POST',
+			url: 'src/Search/freeTextSearch.php',
+			data: {"search": search, "core": core},
+			success: function(data){
+				//console.log(data);
+				var liste = $.parseJSON(data);
+				var html = '<h2>Search on CNET</h2>';
+				html += '<p>'+liste.response['numFound']+' resultats pour "'+$('#search').val()+'"</p>';
+				$.each(liste.response.docs, function(i, element) {
+					if(!!element['url'])
+						html+='<a target="_blank" href="'+element['url']+'">';
+					html += '<div class="row freeTextSearch">';
+					html += '<div class="col-md-10">'
+					var name = '<h3>'+element['title']+'</h3>';
+					var content = (element['content'])?'<p>'+element['content']+'</p>':'';
+
+					html += name;
+					if(!!element['url'])
+						html+='</a>';
+					html += content;
+					html += '</div><div class="col-md-2"><div class="vertical-center"> ';
+					html+='<img src="'+element['preview_image']+'" alt="">';
+					html += '</div></div></div>';
+
+
+
+				});
+
+				$(html).appendTo('#searchResult');
+				$(".freeTextSearch").highlight(search.split(" "));
+
+			},
+			error: function(err){
+				console.log(err);
+			}
+		});
+>>>>>>> 87621cbc92855fa6453b72614d04c1b3d8d32bd9
 	}
 
 
