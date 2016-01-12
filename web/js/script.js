@@ -116,7 +116,6 @@ $(document).ready(function(){
 				}
 			});
 		}
-=======
 
 		$.ajax({
 			type: 'POST',
@@ -162,12 +161,14 @@ $(document).ready(function(){
 		else if($(this).attr('id') == "third")
 			core = "crawl_three";
 
+		var searchSolr = $('#search').val();// 2m variable de search car stop_words retire les mots (ex., apple expo => appexpo)
+
 		$('#entities').children().remove();
 		$('#searchResult').children().remove();
 		$.ajax({
 			type: 'POST',
 			url: 'src/Search/freeTextSearch.php',
-			data: {"search": search, "core": core},
+			data: {"search": searchSolr, "core": core},
 			success: function(data){
 				//console.log(data);
 				var liste = $.parseJSON(data);
@@ -201,7 +202,6 @@ $(document).ready(function(){
 				console.log(err);
 			}
 		});
->>>>>>> 87621cbc92855fa6453b72614d04c1b3d8d32bd9
 	}
 
 
