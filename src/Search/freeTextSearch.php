@@ -7,7 +7,17 @@ $core = $_POST['core'];
 //var_dump($core);
 $searchStr = str_replace(": ", "", trim($search));
 $searchStr = str_replace(" ", "+", $searchStr);
-$url = "http://localhost:8983/solr/".$core."/select?q=".$searchStr."~&df=content&wt=json&indent=true";
+
+$searchParamsArray = explode(" ", $searchStr);
+$outParamsUrl = "";
+foreach ($searchParamsArray as $key => $value) {
+    if($key == 0)
+        $outParamsUrl .= "%2B$value~";
+    else
+        $outParamsUrl .= "+$value~";
+}
+$url = "http://localhost:8983/solr/crawl_two/select?q=%28title%3A%28".$outParamsUrl."%29+AND+introtext%3A%28".$outParamsUrl."%29%29%0AOR+%28title%3A%28".$outParamsUrl."%29+OR+introtext%3A%28".$outParamsUrl."%29%29%0AOR+%28content%3A%28".$outParamsUrl."%29%29&wt=json&indent=true";
+
 //echo $url;
 //var_dump($url);
 //echo file_get_contents(urldecode($url));
