@@ -1,0 +1,13 @@
+<dataConfig>
+    <dataSource type="BinFileDataSource" />
+    <document>
+        <entity name="tika-test1" processor="TikaEntityProcessor"
+                url="${solr.install.dir}/example/exampledocs/solr-word.pdf" format="text">
+                <field column="url" name="url"/>
+                <field column="preview_image" name="preview_image"/>
+                <field column="title" name="title" meta="true"/>
+                <field column="content" name="content"/>
+                <field column="introtext" name="introtext"/>
+        </entity>
+    </document>
+</dataConfig>
