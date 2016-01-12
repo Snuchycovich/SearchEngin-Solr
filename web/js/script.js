@@ -3,6 +3,36 @@ $(document).ready(function(){
 	$Spelling.UserInterfaceTranslation = "fr";
 	//$(function() {$('#search').spellAsYouType({defaultDictionary:'Francais',checkGrammar:true,showLanguagesInContextMenu:false});});
 
+	(function() {
+
+		var element = $('#text-content');
+
+		/*// Init the text spellchecker
+		var spellchecker = new $.SpellChecker(element, {
+			lang: 'fr',
+			parser: 'text',
+			webservice: {
+				path: 'src/webservices/php/SpellChecker.php',
+				driver: 'pspell'
+			},
+			suggestBox: {
+				position: 'above'
+			},
+			incorrectWords: {
+				container: '#incorrect-word-list'
+			}
+		});*/
+
+		// Bind spellchecker handler functions
+		spellchecker.on('check.success', function() {
+			alert('There are no incorrectly spelt words.');
+		});
+
+		// Check the spelling
+		$("#check-textarea").click(function(e){
+			spellchecker.check();
+		});
+	})();
 
 
 	$('.crawl').click(function(){
@@ -11,6 +41,7 @@ $(document).ready(function(){
 		var o = $Spelling.AjaxDidYouMean($('#search').val());
 
 		o.onDidYouMean = function(result){
+			//alert(result)
 			if(result && !result.contains("*PHP Spellcheck Trial*") && result!="") {
 				html = '<div id="spell" class="row"><div class="span6" style="float: none; margin: 0 auto;">Essayez avec cette orthographe : <a id="suggestionLink" href="#">' + result + '</a></div></div>'
 				$(html).insertAfter('.header');
@@ -45,7 +76,6 @@ $(document).ready(function(){
 						} else
 							var name = '<h3>' + element['result']['name'] + '</h3>';
 						var desc = (!!element['result']['description']) ? '<p class="entityType">' + element['result']['description'] + '</p>' : '';
-
 
 						html += name;
 						if (element.result.image)
@@ -113,35 +143,7 @@ $(document).ready(function(){
 
 					$(html).appendTo('#searchResult');
 					$(".freeTextSearch").highlight(search.split(" "));
-					$('<div id="paginationdemo" class="demo">'+
-							'<h1>Demo 5</h1><div id="p1" class="pagedemo _current" style="">Page 1</div><div id="p2" class="pagedemo" style="display:none;">Page 2</div>'+
-					'<div id="p3" class="pagedemo" style="display:none;">Page 3</div>'+
-					'<div id="p4" class="pagedemo" style="display:none;">Page 4</div>'+
-					'<div id="p5" class="pagedemo" style="display:none;">Page 5</div>'+
-					'<div id="p6" class="pagedemo" style="display:none;">Page 6</div>'+
-					'<div id="p7" class="pagedemo" style="display:none;">Page 7</div>'+
-					'<div id="p8" class="pagedemo" style="display:none;">Page 8</div>'+
-					'<div id="p9" class="pagedemo" style="display:none;">Page 9</div>'+
-					'<div id="p10" class="pagedemo" style="display:none;">Page 10</div>'+
-					'<iv id="demo5"></div></div>').appendTo("#searchResul");
-					$("#demo5").paginate({
-						count 		: 10,
-						start 		: 1,
-						display     : 7,
-						border					: true,
-						border_color			: '#fff',
-						text_color  			: '#fff',
-						background_color    	: 'black',
-						border_hover_color		: '#ccc',
-						text_hover_color  		: '#000',
-						background_hover_color	: '#fff',
-						images					: false,
-						mouse					: 'press',
-						onChange     			: function(page){
-							$('._current','#paginationdemo').removeClass('_current').hide();
-							$('#p'+page).addClass('_current').show();
-						}
-					});
+
 
 				},
 				error: function(err){
