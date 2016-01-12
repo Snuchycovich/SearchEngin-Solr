@@ -3,11 +3,11 @@ $(document).ready(function(){
 	$Spelling.UserInterfaceTranslation = "fr";
 	//$(function() {$('#search').spellAsYouType({defaultDictionary:'Francais',checkGrammar:true,showLanguagesInContextMenu:false});});
 
-	(function() {
+	/*(function() {
 
 		var element = $('#text-content');
 
-		/*// Init the text spellchecker
+		// Init the text spellchecker
 		var spellchecker = new $.SpellChecker(element, {
 			lang: 'fr',
 			parser: 'text',
@@ -21,7 +21,7 @@ $(document).ready(function(){
 			incorrectWords: {
 				container: '#incorrect-word-list'
 			}
-		});*/
+		});
 
 		// Bind spellchecker handler functions
 		spellchecker.on('check.success', function() {
@@ -32,7 +32,7 @@ $(document).ready(function(){
 		$("#check-textarea").click(function(e){
 			spellchecker.check();
 		});
-	})();
+	})();*/
 
 
 	$('.crawl').click(function(){
