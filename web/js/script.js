@@ -48,12 +48,12 @@ $(document).ready(function(){
 				$("#suggestionLink").click(function () {
 					$('#search').val(result);
 					$("#spell").remove();
-					findResults(id,0,10);
+					findResults(id,0,20);
 				})
 			}
 		}
 
-		findResults(id,0,10);
+		findResults(id,0,20);
 
 
 	});
@@ -116,9 +116,9 @@ $(document).ready(function(){
 				success: function(data){
 					console.log(data);
 					var liste = $.parseJSON(data);
-					var currPage = startRequest/10 + 1;
-					var nbPages = (liste.response['numFound']/10 + 1).toFixed();
-					var html = '<h2>Search on CNET</h2>';
+					var currPage = startRequest/20 + 1;
+					var nbPages = (liste.response['numFound']/20 + 1).toFixed();
+					var html = '<h2>Recherche sur CNET</h2>';
 					html += '<p class="nbResults"><span style="float:left">Page <b>'+currPage+'</b> de <b>'+nbPages+'</b></span><strong>'+liste.response['numFound']+'</strong> resultats pour <strong>"'+$('#search').val()+'"</strong></p>';
 					$.each(liste.response.docs, function(i, element) {
 						if(!!element['url'])
@@ -129,7 +129,7 @@ $(document).ready(function(){
 						var fileName= urlToFilename.split("/");
 						var name = '<h3><a target="_blank" href="'+element['url']+'"><img src="'+element['preview_image']+'" alt="'+element['title']+'">'+element['title']+'</a></h3>';
 						var url = '<a class="url" target="_blank" href="'+element['url']+'" title="Page originale">'+element['url']+'</a> <a target="_blank" href="http://localhost:8983/solr/'+core+'/'+fileName[4]+'" title="Page en cache"><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></a>';
-						var content = (element['content'])?'<p>'+element['content']+'</p>':'';
+						var content = (element['introtext'])?'<p>'+element['introtext']+'</p>':'';
 						var pagination = "some"
 
 						html += name;
@@ -164,8 +164,8 @@ $(document).ready(function(){
 						$(".pagination li a").hide();
 						$(this).addClass("active");
 						
-						var startRequest = (clickedPage-1)*10;
-						var rowToRender = 10;
+						var startRequest = (clickedPage-1)*20;
+						var rowToRender = 20;
 						findResults(id, startRequest, rowToRender)
 					});
 
