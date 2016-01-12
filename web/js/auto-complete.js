@@ -28,7 +28,7 @@ $.widget( "app.autocomplete", $.ui.autocomplete, {
 });
 
 $.ajax({
-    url : "http://localhost:8983/solr/crawl_three/select?q=*:*&df=content&wt=json&indent=true",
+    url : "http://localhost:8983/solr/crawl_three/select?q=*:*&start=0&rows=10000&df=content&wt=json&indent=true",
     success : function(data) {
         var docs = JSON.stringify(data.response.docs);
         var jsonData = JSON.parse(docs);
