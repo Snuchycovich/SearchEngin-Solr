@@ -34,7 +34,7 @@ $(document).ready(function(){
 		});
 	})();*/
 
-
+	var currentCrawl;
 	$('.crawl').click(function(){
 		var id = $(this).attr('id');
 		$("#spell").remove();
@@ -48,17 +48,17 @@ $(document).ready(function(){
 				$("#suggestionLink").click(function () {
 					$('#search').val(result);
 					$("#spell").remove();
-					findResults(id);
+					findResults(id,0,10);
 				})
 			}
 		}
 
-		findResults(id);
+		findResults(id,0,10);
 
 
 	});
 
-	var findResults = function(id){
+	var findResults = function(id,startRequest,rowToRender){
 		var search = $('#search').val().replaceArray(stop_w,' ');
 		if (search) {
 			$.ajax({
@@ -112,12 +112,14 @@ $(document).ready(function(){
 			$.ajax({
 				type: 'POST',
 				url: 'src/Search/freeTextSearch.php',
-				data: {"search": search, "core": core},
+				data: {"search": search, "core": core,"startRequest":startRequest, "rowToRender": rowToRender},
 				success: function(data){
 					console.log(data);
 					var liste = $.parseJSON(data);
+					var currPage = startRequest/10 + 1;
+					var nbPages = (liste.response['numFound']/10 + 1).toFixed();
 					var html = '<h2>Search on CNET</h2>';
-					html += '<p class="nbResults"><strong>'+liste.response['numFound']+'</strong> resultats pour <strong>"'+$('#search').val()+'"</strong></p>';
+					html += '<p class="nbResults"><span style="float:left">Page <b>'+currPage+'</b> de <b>'+nbPages+'</b></span><strong>'+liste.response['numFound']+'</strong> resultats pour <strong>"'+$('#search').val()+'"</strong></p>';
 					$.each(liste.response.docs, function(i, element) {
 						if(!!element['url'])
 							html+='';
@@ -128,6 +130,7 @@ $(document).ready(function(){
 						var name = '<h3><a target="_blank" href="'+element['url']+'"><img src="'+element['preview_image']+'" alt="'+element['title']+'">'+element['title']+'</a></h3>';
 						var url = '<a class="url" target="_blank" href="'+element['url']+'" title="Page originale">'+element['url']+'</a> <a target="_blank" href="http://localhost:8983/solr/'+core+'/'+fileName[4]+'" title="Page en cache"><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></a>';
 						var content = (element['content'])?'<p>'+element['content']+'</p>':'';
+						var pagination = "some"
 
 						html += name;
 						html += url;
@@ -140,8 +143,32 @@ $(document).ready(function(){
 						 html+='</a>';*/
 
 					});
+					
+					var pagiHtml = '<div class="pagination-wrap"><ul class="pagination">';
+					
+					for (i = 1; i <= nbPages; i++) {
+						if (currPage == i) {pagiHtml += '<li><a href="#" class="active">'+i+'</a></li>';}
+						else {pagiHtml += '<li><a href="#">'+i+'</a></li>';}
+					    
+					}
+					pagiHtml += '</ul></div>';
+					
 
 					$(html).appendTo('#searchResult');
+					$(pagiHtml).appendTo('#searchResult');
+
+					$(".pagination li a").click(function(e){
+						e.stopPropagation()
+						e.preventDefault()
+						var clickedPage = $(this).html();
+						$(".pagination li a").hide();
+						$(this).addClass("active");
+						
+						var startRequest = (clickedPage-1)*10;
+						var rowToRender = 10;
+						findResults(id, startRequest, rowToRender)
+					});
+
 					$(".freeTextSearch").highlight(search.split(" "));
 
 

@@ -5,6 +5,10 @@ $search = wd_remove_accents($search);
 
 $core = $_POST['core'];
 //var_dump($core);
+// print_r($_POST);
+$startRequest = $_POST['startRequest'];
+$rowToRender = $_POST['rowToRender'];
+
 $searchStr = str_replace(": ", "", trim($search));
 $searchStr = str_replace(" ", "+", $searchStr);
 
@@ -17,7 +21,7 @@ foreach ($searchParamsArray as $key => $value) {
         $outParamsUrl .= "+$value~";
 }
 // print_r($searchParamsArray);
-$url = "http://localhost:8983/solr/".$core."/select?q=%28title%3A%28".$outParamsUrl."%29+AND+introtext%3A%28".$outParamsUrl."%29%29+OR+%28title%3A%28".$outParamsUrl."%29+OR+introtext%3A%28".$outParamsUrl."%29%29+OR+%28content%3A%28".$outParamsUrl."%29%29&wt=json&indent=true";
+$url = "http://localhost:8983/solr/".$core."/select?q=%28title%3A%28".$outParamsUrl."%29+AND+introtext%3A%28".$outParamsUrl."%29%29+OR+%28title%3A%28".$outParamsUrl."%29+OR+introtext%3A%28".$outParamsUrl."%29%29+OR+%28content%3A%28".$outParamsUrl."%29%29&start=".$startRequest."&rows=".$rowToRender."&wt=json&indent=true";
 //echo $url;
 //var_dump($url);
 // echo file_get_contents(urldecode($url));
